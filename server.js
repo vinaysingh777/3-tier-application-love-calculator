@@ -1,30 +1,30 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const Result = require('./db'); // Import the Result model
 
 const app = express();
-const port = 3000;
+const port = 8080;
 
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static('public')); // Serve static files from 'public' directory
 
-mongoose.connect('mongodb://mongo:27017/lovecalculator', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+// Connect to MongoDB (optional, if needed for your app)
+// mongoose.connect('mongodb://localhost:27017/lovecalculator', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Root route
+app.get('/', (req, res) => {
+  res.send('Welcome to the Love Calculator!');
 });
 
-app.post('/api/saveResult', async (req, res) => {
-    try {
-        const { name1, name2, score } = req.body;
-        const result = new Result({ name1, name2, score });
-        await result.save();
-        res.status(200).json({ message: 'Result saved successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to save result', error });
-    }
+// Other routes
+app.post('/calculate-love', (req, res) => {
+  const { name1, name2 } = req.body;
+  // Love calculation logic
+  const lovePercentage = Math.floor(Math.random() * 100) + 1;
+  res.json({ name1, name2, lovePercentage });
 });
 
 app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}/`);
 });
